@@ -1,136 +1,91 @@
 # Changelog
 
-All notable changes to this project will automatically be documented in this file.
+All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v0.3.8 - 2026-06-26
+---
 
-### What's Changed
+## [0.3.8](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.7...v0.3.8) (2026-06-26)
 
-#### 🧺 Miscellaneous
+## [0.3.7](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.6...v0.3.7) (2026-03-09)
 
-* chore: bump requests 2.34.2 (#14) @carlovoSBP
 
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.7...v0.3.8
+### 🐛 Fixes
 
-## v0.3.7 - 2026-03-09
+* trigger lambda artifact update flows ([#13](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/13)) ([98bb9f2](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/98bb9f22034ff695fd5b36acb1b0e9fdf6cfd1c3))
 
-### What's Changed
+## [0.3.6](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.5...v0.3.6) (2026-03-09)
 
-* fix: trigger lambda artifact update flows by @carlovoSBP in https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/13
 
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.6...v0.3.7
+### 🐛 Fixes
 
-## v0.3.6 - 2026-03-09
+* remove pip from lambda artifact ([#12](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/12)) ([1448f6f](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/1448f6fad8f4821334031653182f1291ae142c37))
+* remove pip from lambda artifact ([#12](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/12)) ([1448f6f](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/1448f6fad8f4821334031653182f1291ae142c37))
 
-### What's Changed
+## [0.3.5](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.4...v0.3.5) (2025-10-01)
 
-* fix: remove pip from lambda artifact by @carlovoSBP in https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/12
 
-### New Contributors
+### 🐛 Fixes
 
-* @carlovoSBP made their first contribution in https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/12
+* Adding exponential backoff for Terraform rate limit errors with max retry ([#11](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/11)) ([530d145](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/530d145163c7133234acac7f7c3488039fe84ece))
 
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.5...v0.3.6
+## [0.3.4](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.3...v0.3.4) (2025-09-15)
 
-## v0.3.5 - 2025-10-01
 
-### What's Changed
+### 🐛 Fixes
 
-#### 🐛 Bug Fixes
+* Adding code to handle rate limit HTTP 429 errors from Terraform API ([#10](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/10)) ([5b4704d](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/5b4704d62d79a316cacf71b66fd3a0c659345b81))
 
-* fix: Adding exponential backoff for Terraform rate limit errors with max retry (#11) @mayur7436
+## [0.3.3](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.2...v0.3.3) (2025-09-05)
 
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.4...v0.3.5
 
-## v0.3.4 - 2025-09-15
+### 🐛 Fixes
 
-### What's Changed
+* bug: Removing old packages before packaging ([#9](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/9)) ([82c7634](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/82c763475a264e5f4901a518a88354c2bf8975fb))
 
-#### 🐛 Bug Fixes
+## [0.3.2](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.1...v0.3.2) (2025-09-05)
 
-* fix: Adding code to handle rate limit HTTP 429 errors from Terraform API (#10) @mayur7436
 
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.3...v0.3.4
+### 🐛 Fixes
 
-## v0.3.3 - 2025-09-05
+* bug: Adding source_hash to trigger s3 object upload on code changes ([#8](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/8)) ([e04c0c8](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/e04c0c85e58f89ce896a50c96bc3435bbf09f824))
 
-### What's Changed
+## [0.3.1](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.0...v0.3.1) (2025-08-29)
 
-#### 🐛 Bug Fixes
 
-* bug: Removing old packages before packaging (#9) @mayur7436
+### 🐛 Fixes
 
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.2...v0.3.3
+* security: Upgrading requests to fix CVE-2025-50182 and CVE-2024-47081 ([#7](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/7)) ([088b22d](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/088b22d99a560a224e2b586ec351e65d682bd5d9))
 
-## v0.3.2 - 2025-09-05
+## [0.3.0](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.2.1...v0.3.0) (2025-07-08)
 
-### What's Changed
+## [0.2.1](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.2.0...v0.2.1) (2025-06-24)
 
-#### 🐛 Bug Fixes
 
-* bug: Adding source_hash to trigger s3 object upload on code changes (#8) @mayur7436
+### 🐛 Fixes
 
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.1...v0.3.2
+* allowing for aws provider version higher than 6 ([#5](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/5)) ([361bba2](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/361bba2d5346872250eed1f472865996a031e3a1))
 
-## v0.3.1 - 2025-08-29
+## [0.2.0](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.1.1...v0.2.0) (2025-02-14)
 
-### What's Changed
 
-#### 🐛 Bug Fixes
+### 🐛 Fixes
 
-* security: Upgrading requests to fix CVE-2025-50182 and CVE-2024-47081 (#7) @mayur7436
+* Set the lambda runtime to 3.13 per default and updated the lambda libraries to latest versions ([#4](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/4)) ([db50fce](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/db50fce51f64bc029fe72f15a66729edddb8e46c))
 
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.0...v0.3.1
+## [0.1.1](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.1.0...v0.1.1) (2024-08-14)
 
-## v0.3.0 - 2025-07-08
 
-### What's Changed
+### 🐛 Fixes
 
-#### 🚀 Features
+* Deploy lambdas using pre-built packages ([#2](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/2)) ([0ed384c](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/0ed384c49770113a9471381f80904a60cd046d5c))
 
-feature: Support running audit Lambda inside a VPC (#6) @svashisht03
+## 0.1.0 (2024-08-12)
 
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.2.1...v0.3.0
 
-## v0.2.1 - 2025-06-24
+### 🚀 Features
 
-### What's Changed
+* First version ([#1](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/1)) ([9c74daf](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/9c74daff485980568177d0d8c15ae5c2cc132c73))
 
-#### 🐛 Bug Fixes
-
-* fix: allowing for aws provider version higher than 6 (#5) @macampo
-
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.2.0...v0.2.1
-
-## v0.2.0 - 2025-02-14
-
-### What's Changed
-
-#### 🚀 Features
-
-* fix: Set the lambda runtime to 3.13 per default and updated the lambda libraries to latest versions. Python 3.12 is still supported, but not the default. In addition, added a workflow that will automatically build the lambda deployment packages and commit them to the repo (#4) @macampo
-
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.1.1...v0.2.0
-
-## v0.1.1 - 2024-08-14
-
-### What's Changed
-
-#### 🐛 Bug Fixes
-
-* fix: Deploy lambdas using pre-built packages (#2) @shoekstra
-
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/compare/v0.1.0...v0.1.1
-
-## v0.1.0 - 2024-08-12
-
-### What's Changed
-
-#### 🚀 Features
-
-* feat: First version (#1) @shoekstra
-
-**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/releases/tag/v0.1.0

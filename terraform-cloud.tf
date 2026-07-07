@@ -60,7 +60,7 @@ resource "aws_lambda_event_source_mapping" "terraform_audit_sqs_trigger" {
 }
 
 module "dlq_replay_lambda" {
-  source  = "schubergphilis/mcaf-lambda/aws"
+  source  = "schubergphilis-ep/mcaf-lambda/aws"
   version = "~> 1.4.1"
 
   name                        = "terraform-cloud-dlq-replay"

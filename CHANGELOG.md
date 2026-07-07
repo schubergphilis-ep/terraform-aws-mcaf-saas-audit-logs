@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.9](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.8...v0.3.9) (2026-07-07)
+
+
+### 🐛 Fixes
+
+* migrate MCAF module sources ([#2](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/issues/2)) ([8444323](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/8444323ff39e6c3b9e33640f500cb1f3dd58dd4c))
+
 ## [0.3.8](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.7...v0.3.8) (2026-06-26)
 
 ## [0.3.7](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.6...v0.3.7) (2026-03-09)
@@ -88,4 +95,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🚀 Features
 
 * First version ([#1](https://github.com/schubergphilis/terraform-aws-mcaf-saas-audit-logs/pull/1)) ([9c74daf](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/9c74daff485980568177d0d8c15ae5c2cc132c73))
-

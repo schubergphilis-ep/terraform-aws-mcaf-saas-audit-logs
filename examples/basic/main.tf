@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "kms" {
-  source  = "schubergphilis/mcaf-kms/aws"
+  source  = "schubergphilis-ep/mcaf-kms/aws"
   version = "0.3.0"
 
   name = "example"

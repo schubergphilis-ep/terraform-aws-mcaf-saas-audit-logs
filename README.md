@@ -89,10 +89,10 @@ Each source can be tuned by setting the following optional fields:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_bucket_for_access_logs"></a> [bucket\_for\_access\_logs](#module\_bucket\_for\_access\_logs) | schubergphilis/mcaf-s3/aws | ~> 0.14.1 |
-| <a name="module_bucket_for_audit_logs"></a> [bucket\_for\_audit\_logs](#module\_bucket\_for\_audit\_logs) | schubergphilis/mcaf-s3/aws | ~> 0.14.1 |
-| <a name="module_bucket_for_lambda_package"></a> [bucket\_for\_lambda\_package](#module\_bucket\_for\_lambda\_package) | schubergphilis/mcaf-s3/aws | ~> 0.14.1 |
-| <a name="module_dlq_replay_lambda"></a> [dlq\_replay\_lambda](#module\_dlq\_replay\_lambda) | schubergphilis/mcaf-lambda/aws | ~> 1.4.1 |
+| <a name="module_bucket_for_access_logs"></a> [bucket\_for\_access\_logs](#module\_bucket\_for\_access\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 0.14.1 |
+| <a name="module_bucket_for_audit_logs"></a> [bucket\_for\_audit\_logs](#module\_bucket\_for\_audit\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 0.14.1 |
+| <a name="module_bucket_for_lambda_package"></a> [bucket\_for\_lambda\_package](#module\_bucket\_for\_lambda\_package) | schubergphilis-ep/mcaf-s3/aws | ~> 0.14.1 |
+| <a name="module_dlq_replay_lambda"></a> [dlq\_replay\_lambda](#module\_dlq\_replay\_lambda) | schubergphilis-ep/mcaf-lambda/aws | ~> 1.4.1 |
 | <a name="module_lambda"></a> [lambda](#module\_lambda) | ./modules/audit-lambda | n/a |
 
 ## Resources

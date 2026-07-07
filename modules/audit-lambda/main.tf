@@ -120,7 +120,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_invoke_lambda" {
 module "bucket_for_audit_logs" {
   count = var.create_bucket ? 1 : 0
 
-  source  = "schubergphilis/mcaf-s3/aws"
+  source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 0.14.1"
 
   name_prefix       = var.bucket_base_name
@@ -140,7 +140,7 @@ module "bucket_for_audit_logs" {
 module "bucket_for_access_logs" {
   count = var.create_bucket ? 1 : 0
 
-  source  = "schubergphilis/mcaf-s3/aws"
+  source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 0.14.1"
 
   name_prefix                = "${var.bucket_base_name}-access-logs"
@@ -154,7 +154,7 @@ module "bucket_for_access_logs" {
 module "bucket_for_lambda_package" {
   count = var.create_bucket ? 1 : 0
 
-  source  = "schubergphilis/mcaf-s3/aws"
+  source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 0.14.1"
 
   name_prefix    = "${var.bucket_base_name}-lambda"
@@ -186,7 +186,7 @@ resource "aws_s3_object" "lambda_package" {
 }
 
 module "lambda" {
-  source  = "schubergphilis/mcaf-lambda/aws"
+  source  = "schubergphilis-ep/mcaf-lambda/aws"
   version = "~> 1.4.1"
 
   name                        = var.lambda_name

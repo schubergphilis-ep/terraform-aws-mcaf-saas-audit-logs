@@ -75,7 +75,7 @@ data "aws_caller_identity" "current" {}
 module "bucket_for_audit_logs" {
   count = local.create_bucket ? 1 : 0
 
-  source  = "schubergphilis/mcaf-s3/aws"
+  source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 0.14.1"
 
   name              = "${var.bucket_base_name}-${data.aws_caller_identity.current.account_id}"
@@ -95,7 +95,7 @@ module "bucket_for_audit_logs" {
 module "bucket_for_access_logs" {
   count = local.create_bucket ? 1 : 0
 
-  source  = "schubergphilis/mcaf-s3/aws"
+  source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 0.14.1"
 
   name                       = "${var.bucket_base_name}-access-logs-${data.aws_caller_identity.current.account_id}"
@@ -109,7 +109,7 @@ module "bucket_for_access_logs" {
 module "bucket_for_lambda_package" {
   count = local.create_bucket ? 1 : 0
 
-  source  = "schubergphilis/mcaf-s3/aws"
+  source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 0.14.1"
 
   name           = "${var.bucket_base_name}-lambda-${data.aws_caller_identity.current.account_id}"

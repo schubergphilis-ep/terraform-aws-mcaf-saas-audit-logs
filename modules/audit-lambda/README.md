@@ -4,22 +4,22 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.32, < 7.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.55.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.32, < 7.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.55.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_bucket_for_access_logs"></a> [bucket\_for\_access\_logs](#module\_bucket\_for\_access\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 0.14.1 |
-| <a name="module_bucket_for_audit_logs"></a> [bucket\_for\_audit\_logs](#module\_bucket\_for\_audit\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 0.14.1 |
-| <a name="module_bucket_for_lambda_package"></a> [bucket\_for\_lambda\_package](#module\_bucket\_for\_lambda\_package) | schubergphilis-ep/mcaf-s3/aws | ~> 0.14.1 |
-| <a name="module_lambda"></a> [lambda](#module\_lambda) | schubergphilis-ep/mcaf-lambda/aws | ~> 1.4.1 |
+| <a name="module_bucket_for_access_logs"></a> [bucket\_for\_access\_logs](#module\_bucket\_for\_access\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
+| <a name="module_bucket_for_audit_logs"></a> [bucket\_for\_audit\_logs](#module\_bucket\_for\_audit\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
+| <a name="module_bucket_for_lambda_package"></a> [bucket\_for\_lambda\_package](#module\_bucket\_for\_lambda\_package) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
+| <a name="module_lambda"></a> [lambda](#module\_lambda) | schubergphilis-ep/mcaf-lambda/aws | ~> 4.1.0 |
 
 ## Resources
 
@@ -61,6 +61,7 @@
 | <a name="input_lambda_policy"></a> [lambda\_policy](#input\_lambda\_policy) | Additional policy statements to add to Lambda role | `string` | `null` | no |
 | <a name="input_object_locking"></a> [object\_locking](#input\_object\_locking) | The object locking configuration for the S3 buckets | <pre>object({<br/>    mode  = optional(string, "GOVERNANCE")<br/>    years = optional(number, 1)<br/>  })</pre> | <pre>{<br/>  "mode": "GOVERNANCE",<br/>  "years": 1<br/>}</pre> | no |
 | <a name="input_python_version"></a> [python\_version](#input\_python\_version) | The version of Python to use for the Lambda function | `string` | `"3.13"` | no |
+| <a name="input_region"></a> [region](#input\_region) | The AWS region where resources will be created; if omitted the default provider region is used | `string` | `null` | no |
 | <a name="input_scheduled_time"></a> [scheduled\_time](#input\_scheduled\_time) | Time of day to run the Lambda function (runs once a day) | `string` | `"09:00"` | no |
 | <a name="input_security_group_egress_rules"></a> [security\_group\_egress\_rules](#input\_security\_group\_egress\_rules) | Security Group egress rules | <pre>list(object({<br/>    cidr_ipv4                    = optional(string)<br/>    cidr_ipv6                    = optional(string)<br/>    description                  = string<br/>    from_port                    = optional(number, 0)<br/>    ip_protocol                  = optional(string, "-1")<br/>    prefix_list_id               = optional(string)<br/>    referenced_security_group_id = optional(string)<br/>    to_port                      = optional(number, 0)<br/>  }))</pre> | <pre>[<br/>  {<br/>    "cidr_ipv4": "0.0.0.0/0",<br/>    "description": "Default Security Group rule for SaaS Audit Lambda",<br/>    "ip_protocol": "tcp",<br/>    "to_port": 443<br/>  }<br/>]</pre> | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs associated with the Lambda function | `list(string)` | `null` | no |

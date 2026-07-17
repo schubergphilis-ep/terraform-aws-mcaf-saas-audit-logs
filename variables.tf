@@ -42,6 +42,12 @@ variable "lambda_log_retention" {
   description = "The number of days to retain the logs for the Lambda function"
 }
 
+variable "region" {
+  type        = string
+  default     = null
+  description = "The AWS region where resources will be created; if omitted the default provider region is used"
+}
+
 variable "object_locking" {
   type = object({
     mode  = optional(string, "GOVERNANCE")

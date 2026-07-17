@@ -61,17 +61,16 @@ resource "aws_lambda_event_source_mapping" "terraform_audit_sqs_trigger" {
 
 module "dlq_replay_lambda" {
   source  = "schubergphilis-ep/mcaf-lambda/aws"
-  version = "~> 1.4.1"
+  version = "~> 4.1.0"
 
+  region                      = var.region
   name                        = "terraform-cloud-dlq-replay"
-  create_policy               = true
   create_s3_dummy_object      = false
   description                 = "Lambda to replay messages from DLQ to main SQS queue for Terraform Cloud audit logs"
   handler                     = "dlq_replay.handler"
   kms_key_arn                 = var.kms_key_arn
   log_retention               = var.lambda_log_retention
   memory_size                 = 128
-  policy                      = module.lambda["terraform-cloud"].iam_policy
   runtime                     = "python${var.python_version}"
   s3_bucket                   = "${var.bucket_base_name}-lambda-${data.aws_caller_identity.current.account_id}"
   s3_key                      = module.lambda["terraform-cloud"].s3_lambda_package_object_key
@@ -86,6 +85,11 @@ module "dlq_replay_lambda" {
     MAIN_QUEUE_URL = try(aws_sqs_queue.terraform_cloud_audit_log[0].id, "")
   }
 
+  execution_role = {
+    create_policy = true
+    policy        = module.lambda["terraform-cloud"].iam_policy
+  }
+
   depends_on = [
     aws_sqs_queue.terraform_cloud_audit_log,
     aws_sqs_queue.terraform_cloud_audit_log_dlq,
@@ -94,6 +98,7 @@ module "dlq_replay_lambda" {
 }
 
 resource "aws_lambda_event_source_mapping" "dlq_trigger" {
+  region           = var.region
   batch_size       = 1
   enabled          = true
   event_source_arn = aws_sqs_queue.terraform_cloud_audit_log_dlq[0].arn

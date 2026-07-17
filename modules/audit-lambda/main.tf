@@ -13,7 +13,7 @@ locals {
       abort_incomplete_multipart_upload = { days_after_initiation = 3 }
       expiration                        = { days = 365 }
       noncurrent_version_expiration     = { noncurrent_days = 30 }
-      transition                        = { days = 90, storage_class = "GLACIER_IR" }
+      transition                        = [{ days = 90, storage_class = "GLACIER_IR" }]
     }
   }
 
@@ -62,7 +62,7 @@ data "aws_iam_policy_document" "iam_policy" {
 
   statement {
     sid       = "AllowCloudWatchPutLogEvents"
-    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"]
+    resources = ["arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*"]
 
     actions = [
       "logs:CreateLogGroup",
@@ -84,6 +84,7 @@ data "aws_iam_policy_document" "iam_policy" {
 }
 
 resource "aws_cloudwatch_event_rule" "trigger" {
+  region              = var.region
   name                = "audit-trigger-daily"
   description         = "Triggers audit lambdas daily"
   schedule_expression = local.scheduled_expression
@@ -91,6 +92,7 @@ resource "aws_cloudwatch_event_rule" "trigger" {
 }
 
 resource "aws_cloudwatch_event_target" "trigger" {
+  region    = var.region
   arn       = module.lambda.arn
   rule      = aws_cloudwatch_event_rule.trigger.name
   target_id = module.lambda.name
@@ -121,8 +123,9 @@ module "bucket_for_audit_logs" {
   count = var.create_bucket ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
-  version = "~> 0.14.1"
+  version = "~> 3.0.0"
 
+  region            = var.region
   name_prefix       = var.bucket_base_name
   kms_key_arn       = var.kms_key_arn
   lifecycle_rule    = [local.bucket_lifecycle_rules["one-year-tiered"]]
@@ -141,8 +144,9 @@ module "bucket_for_access_logs" {
   count = var.create_bucket ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
-  version = "~> 0.14.1"
+  version = "~> 3.0.0"
 
+  region                     = var.region
   name_prefix                = "${var.bucket_base_name}-access-logs"
   kms_key_arn                = var.kms_key_arn
   lifecycle_rule             = [local.bucket_lifecycle_rules["one-year-tiered"]]
@@ -155,8 +159,9 @@ module "bucket_for_lambda_package" {
   count = var.create_bucket ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
-  version = "~> 0.14.1"
+  version = "~> 3.0.0"
 
+  region         = var.region
   name_prefix    = "${var.bucket_base_name}-lambda"
   kms_key_arn    = var.kms_key_arn
   lifecycle_rule = [local.bucket_lifecycle_rules["basic"]]
@@ -166,17 +171,20 @@ module "bucket_for_lambda_package" {
 
 resource "aws_secretsmanager_secret" "token" {
   #checkov:skip=CKV2_AWS_57: The api key stored as a secrets is passed down by the end user of this module, therefore secret rotation is not possible.
+  region     = var.region
   name       = var.secret_name
   kms_key_id = var.kms_key_arn
   tags       = var.tags
 }
 
 resource "aws_secretsmanager_secret_version" "token" {
+  region        = var.region
   secret_id     = aws_secretsmanager_secret.token.id
   secret_string = var.api_token
 }
 
 resource "aws_s3_object" "lambda_package" {
+  region      = var.region
   bucket      = local.bucket_for_lambda_package.id
   key         = "${var.lambda_name}-lambda.zip"
   kms_key_id  = var.kms_key_arn
@@ -187,17 +195,16 @@ resource "aws_s3_object" "lambda_package" {
 
 module "lambda" {
   source  = "schubergphilis-ep/mcaf-lambda/aws"
-  version = "~> 1.4.1"
+  version = "~> 4.1.0"
 
+  region                      = var.region
   name                        = var.lambda_name
-  create_policy               = true
   create_s3_dummy_object      = false
   description                 = "Lambda to fetch audit logs from ${var.service_name} and store in S3"
   handler                     = "main.handler"
   kms_key_arn                 = var.kms_key_arn
   log_retention               = var.lambda_log_retention
   memory_size                 = var.lambda_memory_size
-  policy                      = data.aws_iam_policy_document.iam_policy.json
   runtime                     = "python${var.python_version}"
   s3_bucket                   = "${var.bucket_base_name}-lambda-${data.aws_caller_identity.current.account_id}"
   s3_key                      = aws_s3_object.lambda_package.key
@@ -217,6 +224,11 @@ module "lambda" {
     LOG_LEVEL           = var.lambda_log_level
     SECRET_NAME         = var.secret_name
   }, var.environment)
+
+  execution_role = {
+    create_policy = true
+    policy        = data.aws_iam_policy_document.iam_policy.json
+  }
 
   depends_on = [
     local.bucket_for_lambda_package

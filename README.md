@@ -17,7 +17,7 @@ The module requires at least `var.kms_key_arn` and one source configured in `var
 
 ```hcl
 module "saas_audit_logs" {
-  source = "schubergphilis/mcaf-saas-audit-logs/aws"
+  source = "schubergphilis-ep/mcaf-saas-audit-logs/aws"
 
   kms_key_arn = module.kms_key.arn
 

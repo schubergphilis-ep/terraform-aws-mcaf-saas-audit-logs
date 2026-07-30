@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.0](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.9...v1.0.0) (2026-07-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* add region support ([#4](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/issues/4))
+
+### 🚀 Features
+
+* add region support ([#4](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/issues/4)) ([c13eb2f](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/c13eb2ff07386413e90441c0d5ce13dece246656))
+
 ## [0.3.9](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.8...v0.3.9) (2026-07-07)
 
 

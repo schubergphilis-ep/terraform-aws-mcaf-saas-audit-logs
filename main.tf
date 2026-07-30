@@ -22,7 +22,7 @@ locals {
       abort_incomplete_multipart_upload = { days_after_initiation = 3 }
       expiration                        = { days = 365 }
       noncurrent_version_expiration     = { noncurrent_days = 30 }
-      transition                        = { days = 90, storage_class = "GLACIER_IR" }
+      transition                        = [{ days = 90, storage_class = "GLACIER_IR" }]
     }
   }
 
@@ -76,8 +76,9 @@ module "bucket_for_audit_logs" {
   count = local.create_bucket ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
-  version = "~> 0.14.1"
+  version = "~> 3.0.0"
 
+  region            = var.region
   name              = "${var.bucket_base_name}-${data.aws_caller_identity.current.account_id}"
   kms_key_arn       = var.kms_key_arn
   lifecycle_rule    = [local.bucket_lifecycle_rules["one-year-tiered"]]
@@ -96,8 +97,9 @@ module "bucket_for_access_logs" {
   count = local.create_bucket ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
-  version = "~> 0.14.1"
+  version = "~> 3.0.0"
 
+  region                     = var.region
   name                       = "${var.bucket_base_name}-access-logs-${data.aws_caller_identity.current.account_id}"
   kms_key_arn                = var.kms_key_arn
   lifecycle_rule             = [local.bucket_lifecycle_rules["one-year-tiered"]]
@@ -110,8 +112,9 @@ module "bucket_for_lambda_package" {
   count = local.create_bucket ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
-  version = "~> 0.14.1"
+  version = "~> 3.0.0"
 
+  region         = var.region
   name           = "${var.bucket_base_name}-lambda-${data.aws_caller_identity.current.account_id}"
   kms_key_arn    = var.kms_key_arn
   lifecycle_rule = [local.bucket_lifecycle_rules["basic"]]

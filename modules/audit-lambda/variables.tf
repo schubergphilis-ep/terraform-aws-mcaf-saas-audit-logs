@@ -125,6 +125,12 @@ variable "python_version" {
   }
 }
 
+variable "region" {
+  type        = string
+  default     = null
+  description = "The AWS region where resources will be created; if omitted the default provider region is used"
+}
+
 variable "scheduled_time" {
   type        = string
   default     = "09:00"

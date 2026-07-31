@@ -20,19 +20,19 @@
 | <a name="module_bucket_for_audit_logs"></a> [bucket\_for\_audit\_logs](#module\_bucket\_for\_audit\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
 | <a name="module_bucket_for_lambda_package"></a> [bucket\_for\_lambda\_package](#module\_bucket\_for\_lambda\_package) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
 | <a name="module_lambda"></a> [lambda](#module\_lambda) | schubergphilis-ep/mcaf-lambda/aws | ~> 4.1.0 |
+| <a name="module_scheduler_iam_role"></a> [scheduler\_iam\_role](#module\_scheduler\_iam\_role) | schubergphilis-ep/mcaf-role/aws | ~> 0.5.3 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [aws_cloudwatch_event_rule.trigger](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
-| [aws_cloudwatch_event_target.trigger](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
-| [aws_lambda_permission.allow_cloudwatch_to_invoke_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_s3_object.lambda_package](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object) | resource |
+| [aws_scheduler_schedule.trigger_audit_lambdas](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
 | [aws_secretsmanager_secret.token](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret) | resource |
 | [aws_secretsmanager_secret_version.token](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
-| [aws_iam_policy_document.iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.lambda_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.scheduler_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_s3_bucket.bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket) | data source |
 
@@ -53,7 +53,7 @@
 | <a name="input_create_bucket"></a> [create\_bucket](#input\_create\_bucket) | Whether to create S3 buckets | `bool` | `true` | no |
 | <a name="input_created_bucket_names"></a> [created\_bucket\_names](#input\_created\_bucket\_names) | The names of existing S3 buckets to use | <pre>object({<br/>    audit_logs     = string<br/>    lambda_package = string<br/>  })</pre> | `null` | no |
 | <a name="input_days_to_fetch"></a> [days\_to\_fetch](#input\_days\_to\_fetch) | The number of days of audit logs to fetch | `number` | `1` | no |
-| <a name="input_dead_letter_queue"></a> [dead\_letter\_queue](#input\_dead\_letter\_queue) | The ARN of the dead letter queue for the CloudWatch event rule | `string` | `null` | no |
+| <a name="input_dead_letter_queue"></a> [dead\_letter\_queue](#input\_dead\_letter\_queue) | The ARN of the dead letter queue for the EventBridge Scheduler schedule | `string` | `null` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Additional environment variables to pass to the Lambda function | `map(string)` | `null` | no |
 | <a name="input_lambda_log_level"></a> [lambda\_log\_level](#input\_lambda\_log\_level) | The log level of the Lambda function | `string` | `"info"` | no |
 | <a name="input_lambda_log_retention"></a> [lambda\_log\_retention](#input\_lambda\_log\_retention) | The number of days to retain the logs for the Lambda function | `number` | `365` | no |
@@ -62,6 +62,7 @@
 | <a name="input_object_locking"></a> [object\_locking](#input\_object\_locking) | The object locking configuration for the S3 buckets | <pre>object({<br/>    mode  = optional(string, "GOVERNANCE")<br/>    years = optional(number, 1)<br/>  })</pre> | <pre>{<br/>  "mode": "GOVERNANCE",<br/>  "years": 1<br/>}</pre> | no |
 | <a name="input_python_version"></a> [python\_version](#input\_python\_version) | The version of Python to use for the Lambda function | `string` | `"3.13"` | no |
 | <a name="input_region"></a> [region](#input\_region) | The AWS region where resources will be created; if omitted the default provider region is used | `string` | `null` | no |
+| <a name="input_schedule_expression_timezone"></a> [schedule\_expression\_timezone](#input\_schedule\_expression\_timezone) | The timezone in which the scheduling expression is evaluated | `string` | `"Europe/Amsterdam"` | no |
 | <a name="input_scheduled_time"></a> [scheduled\_time](#input\_scheduled\_time) | Time of day to run the Lambda function (runs once a day) | `string` | `"09:00"` | no |
 | <a name="input_security_group_egress_rules"></a> [security\_group\_egress\_rules](#input\_security\_group\_egress\_rules) | Security Group egress rules | <pre>list(object({<br/>    cidr_ipv4                    = optional(string)<br/>    cidr_ipv6                    = optional(string)<br/>    description                  = string<br/>    from_port                    = optional(number, 0)<br/>    ip_protocol                  = optional(string, "-1")<br/>    prefix_list_id               = optional(string)<br/>    referenced_security_group_id = optional(string)<br/>    to_port                      = optional(number, 0)<br/>  }))</pre> | <pre>[<br/>  {<br/>    "cidr_ipv4": "0.0.0.0/0",<br/>    "description": "Default Security Group rule for SaaS Audit Lambda",<br/>    "ip_protocol": "tcp",<br/>    "to_port": 443<br/>  }<br/>]</pre> | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs associated with the Lambda function | `list(string)` | `null` | no |
@@ -72,7 +73,7 @@
 | Name | Description |
 |------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the Lambda function |
-| <a name="output_iam_policy"></a> [iam\_policy](#output\_iam\_policy) | The IAM policy document that was created |
+| <a name="output_lambda_iam_policy"></a> [lambda\_iam\_policy](#output\_lambda\_iam\_policy) | The IAM policy document that was created for the Lambda function |
 | <a name="output_s3_lambda_package_object_checksum_sha256"></a> [s3\_lambda\_package\_object\_checksum\_sha256](#output\_s3\_lambda\_package\_object\_checksum\_sha256) | S3 Lambda package object checksum (sha256) |
 | <a name="output_s3_lambda_package_object_key"></a> [s3\_lambda\_package\_object\_key](#output\_s3\_lambda\_package\_object\_key) | S3 Lambda package object key |
 | <a name="output_s3_lambda_package_object_version"></a> [s3\_lambda\_package\_object\_version](#output\_s3\_lambda\_package\_object\_version) | S3 Lambda package object key |

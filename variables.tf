@@ -73,7 +73,7 @@ variable "python_version" {
 
 variable "schedule_expression_timezone" {
   type        = string
-  default     = "Europe/Amsterdam"
+  default     = "UTC"
   description = "The timezone in which the scheduling expression is evaluated"
 }
 

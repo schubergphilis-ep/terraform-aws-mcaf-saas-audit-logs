@@ -100,6 +100,20 @@ data "aws_iam_policy_document" "scheduler_iam_policy" {
       resources = [statement.value]
     }
   }
+
+  dynamic "statement" {
+    for_each = var.dead_letter_queue != null ? [var.kms_key_arn] : []
+
+    content {
+      sid       = "AllowKMSForDeadLetterQueue"
+      resources = [statement.value]
+
+      actions = [
+        "kms:Decrypt",
+        "kms:GenerateDataKey"
+      ]
+    }
+  }
 }
 
 module "scheduler_iam_role" {
@@ -107,7 +121,7 @@ module "scheduler_iam_role" {
   version = "~> 0.5.3"
 
   name                  = "audit-trigger-scheduler-${module.lambda.name}"
-  description           = "IAM role for audit trigger scheduler for ${var.lambda_name}"
+  description           = "IAM role for audit trigger scheduler for ${module.lambda.name}"
   principal_identifiers = ["scheduler.amazonaws.com"]
   principal_type        = "Service"
   role_policy           = data.aws_iam_policy_document.scheduler_iam_policy.json
@@ -132,7 +146,7 @@ resource "aws_scheduler_schedule" "trigger_audit_lambdas" {
 
     retry_policy {
       maximum_retry_attempts       = 3
-      maximum_event_age_in_seconds = 60
+      maximum_event_age_in_seconds = 900
     }
 
     dynamic "dead_letter_config" {

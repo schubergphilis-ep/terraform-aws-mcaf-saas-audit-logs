@@ -87,7 +87,7 @@ module "dlq_replay_lambda" {
 
   execution_role = {
     create_policy = true
-    policy        = module.lambda["terraform-cloud"].iam_policy
+    policy        = module.lambda["terraform-cloud"].lambda_iam_policy
   }
 
   depends_on = [

@@ -3,9 +3,9 @@ output "arn" {
   value       = module.lambda.arn
 }
 
-output "iam_policy" {
-  description = "The IAM policy document that was created"
-  value       = data.aws_iam_policy_document.iam_policy.json
+output "lambda_iam_policy" {
+  description = "The IAM policy document that was created for the Lambda function"
+  value       = data.aws_iam_policy_document.lambda_iam_policy.json
 }
 
 output "s3_lambda_package_object_checksum_sha256" {

@@ -142,9 +142,9 @@ def handler(event, context):
     log_date = since.strftime('%Y-%m-%d')
     unique_sequence = uniqueid()
 
-    # Check if the Lambda is triggered by a CloudWatch event
-    if 'source' in event and event['source'] == 'aws.events':
-        logger.debug('Lambda triggered by CloudWatch event')
+    # Check if the Lambda is triggered by a Eventbridge Scheduler event
+    if 'source' in event and event['source'] == 'aws.scheduler':
+        logger.debug('Lambda triggered by Eventbridge Scheduler event')
         # Send the initial message to SQS to start the process
         message_body = {'log_date': log_date, 'page': 1, 'total_pages': 1, 'operation': 'extract_init'}
         send_sqs_message(queue_url, message_body)

@@ -70,6 +70,13 @@ variable "python_version" {
     error_message = "Python version should be 3.12 or 3.13"
   }
 }
+
+variable "schedule_expression_timezone" {
+  type        = string
+  default     = "UTC"
+  description = "The timezone in which the scheduling expression is evaluated"
+}
+
 variable "scheduled_time" {
   type        = string
   default     = "09:00"

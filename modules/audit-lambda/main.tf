@@ -36,7 +36,7 @@ data "aws_s3_bucket" "bucket" {
   bucket = each.value
 }
 
-data "aws_iam_policy_document" "iam_policy" {
+data "aws_iam_policy_document" "lambda_iam_policy" {
   # checkov:skip=CKV_AWS_111: Access should be limited on KMS key
   # checkov:skip=CKV_AWS_356: Access should be limited on KMS key
 
@@ -83,40 +83,80 @@ data "aws_iam_policy_document" "iam_policy" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "trigger" {
-  region              = var.region
-  name                = "audit-trigger-daily"
-  description         = "Triggers audit lambdas daily"
-  schedule_expression = local.scheduled_expression
-  tags                = var.tags
-}
+data "aws_iam_policy_document" "scheduler_iam_policy" {
 
-resource "aws_cloudwatch_event_target" "trigger" {
-  region    = var.region
-  arn       = module.lambda.arn
-  rule      = aws_cloudwatch_event_rule.trigger.name
-  target_id = module.lambda.name
+  statement {
+    sid       = "AllowInvokeLambda"
+    actions   = ["lambda:InvokeFunction"]
+    resources = [module.lambda.arn]
+  }
 
-  dynamic "dead_letter_config" {
+  dynamic "statement" {
     for_each = var.dead_letter_queue != null ? [var.dead_letter_queue] : []
 
     content {
-      arn = var.dead_letter_queue
+      sid       = "AllowSendToDeadLetterQueue"
+      actions   = ["sqs:SendMessage"]
+      resources = [statement.value]
     }
   }
 
-  retry_policy {
-    maximum_retry_attempts       = 3
-    maximum_event_age_in_seconds = 60
+  dynamic "statement" {
+    for_each = var.dead_letter_queue != null ? [var.kms_key_arn] : []
+
+    content {
+      sid       = "AllowKMSForDeadLetterQueue"
+      resources = [statement.value]
+
+      actions = [
+        "kms:Decrypt",
+        "kms:GenerateDataKey"
+      ]
+    }
   }
 }
 
-resource "aws_lambda_permission" "allow_cloudwatch_to_invoke_lambda" {
-  statement_id  = "AllowLambdaExecutionFromCloudWatch"
-  action        = "lambda:InvokeFunction"
-  function_name = module.lambda.name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.trigger.arn
+module "scheduler_iam_role" {
+  source  = "schubergphilis-ep/mcaf-role/aws"
+  version = "~> 0.5.3"
+
+  name                  = "audit-trigger-scheduler-${module.lambda.name}"
+  description           = "IAM role for audit trigger scheduler for ${module.lambda.name}"
+  principal_identifiers = ["scheduler.amazonaws.com"]
+  principal_type        = "Service"
+  role_policy           = data.aws_iam_policy_document.scheduler_iam_policy.json
+  tags                  = var.tags
+}
+
+resource "aws_scheduler_schedule" "trigger_audit_lambdas" {
+  #checkov:skip=CKV_AWS_297: The schedule carries no payload/data when it triggers the lambdas, so a CMK for encryption at rest is not required.
+  region                       = var.region
+  name                         = "audit-trigger-daily-${module.lambda.name}"
+  description                  = "Triggers audit lambdas daily"
+  schedule_expression          = local.scheduled_expression
+  schedule_expression_timezone = var.schedule_expression_timezone
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  target {
+    arn      = module.lambda.arn
+    role_arn = module.scheduler_iam_role.arn
+
+    retry_policy {
+      maximum_retry_attempts       = 3
+      maximum_event_age_in_seconds = 900
+    }
+
+    dynamic "dead_letter_config" {
+      for_each = var.dead_letter_queue != null ? [var.dead_letter_queue] : []
+
+      content {
+        arn = var.dead_letter_queue
+      }
+    }
+  }
 }
 
 module "bucket_for_audit_logs" {
@@ -227,7 +267,7 @@ module "lambda" {
 
   execution_role = {
     create_policy = true
-    policy        = data.aws_iam_policy_document.iam_policy.json
+    policy        = data.aws_iam_policy_document.lambda_iam_policy.json
   }
 
   depends_on = [

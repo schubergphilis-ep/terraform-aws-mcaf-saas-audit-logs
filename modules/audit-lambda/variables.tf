@@ -41,7 +41,7 @@ variable "created_bucket_names" {
 variable "dead_letter_queue" {
   type        = string
   default     = null
-  description = "The ARN of the dead letter queue for the CloudWatch event rule"
+  description = "The ARN of the dead letter queue for the EventBridge Scheduler schedule"
 }
 
 variable "compress_audit_logs" {
@@ -129,6 +129,12 @@ variable "region" {
   type        = string
   default     = null
   description = "The AWS region where resources will be created; if omitted the default provider region is used"
+}
+
+variable "schedule_expression_timezone" {
+  type        = string
+  default     = "UTC"
+  description = "The timezone in which the scheduling expression is evaluated"
 }
 
 variable "scheduled_time" {

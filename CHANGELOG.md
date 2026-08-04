@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v1.0.0...v1.1.0) (2026-08-04)
+
+
+### 🚀 Features
+
+* replace cloudwatch event rule with eventbridge scheduler ([#6](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/issues/6)) ([821a511](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/821a511b7b1f5ecec826bd03ef2caef8ddeeaa26))
+
 ## [1.0.0](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v0.3.9...v1.0.0) (2026-07-30)
 
 

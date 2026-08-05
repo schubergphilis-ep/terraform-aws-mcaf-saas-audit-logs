@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.1](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v1.1.0...v1.1.1) (2026-08-05)
+
+
+### 🐛 Fixes
+
+* fix kms key dependency issue ([#8](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/issues/8)) ([4064f79](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/4064f792095bb118f048090d58d44301e5337890))
+
 ## [1.1.0](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v1.0.0...v1.1.0) (2026-08-04)
 
 

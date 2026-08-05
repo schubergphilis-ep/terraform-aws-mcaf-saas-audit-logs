@@ -101,18 +101,14 @@ data "aws_iam_policy_document" "scheduler_iam_policy" {
     }
   }
 
-  dynamic "statement" {
-    for_each = var.dead_letter_queue != null ? [var.kms_key_arn] : []
+  statement {
+    sid       = "AllowKMSForDeadLetterQueue"
+    resources = [var.kms_key_arn]
 
-    content {
-      sid       = "AllowKMSForDeadLetterQueue"
-      resources = [statement.value]
-
-      actions = [
-        "kms:Decrypt",
-        "kms:GenerateDataKey"
-      ]
-    }
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey"
+    ]
   }
 }
 
@@ -122,6 +118,7 @@ module "scheduler_iam_role" {
 
   name                  = "audit-trigger-scheduler-${module.lambda.name}"
   description           = "IAM role for audit trigger scheduler for ${module.lambda.name}"
+  create_policy         = true
   principal_identifiers = ["scheduler.amazonaws.com"]
   principal_type        = "Service"
   role_policy           = data.aws_iam_policy_document.scheduler_iam_policy.json

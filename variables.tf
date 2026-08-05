@@ -34,6 +34,7 @@ variable "created_bucket_names" {
 variable "kms_key_arn" {
   type        = string
   description = "The ARN of the KMS key used to encrypt the resources"
+  nullable    = false
 }
 
 variable "lambda_log_retention" {

@@ -33,6 +33,9 @@ locals {
     lambda_package = module.bucket_for_lambda_package[0].name
   } : {}
 
+  kms_key_arn = var.kms_key_arn != null ? var.kms_key_arn : module.kms_key[0].arn
+  region      = data.aws_region.current.region
+
   source_defaults = {
     gitlab = {
       api_url      = "https://gitlab.com/api/v4"
@@ -72,6 +75,10 @@ locals {
 
 data "aws_caller_identity" "current" {}
 
+data "aws_region" "current" {
+  region = var.region
+}
+
 module "bucket_for_audit_logs" {
   count = local.create_bucket ? 1 : 0
 
@@ -80,7 +87,7 @@ module "bucket_for_audit_logs" {
 
   region            = var.region
   name              = "${var.bucket_base_name}-${data.aws_caller_identity.current.account_id}"
-  kms_key_arn       = var.kms_key_arn
+  kms_key_arn       = local.kms_key_arn
   lifecycle_rule    = [local.bucket_lifecycle_rules["one-year-tiered"]]
   object_lock_mode  = var.object_locking.mode
   object_lock_years = var.object_locking.years
@@ -101,7 +108,7 @@ module "bucket_for_access_logs" {
 
   region                     = var.region
   name                       = "${var.bucket_base_name}-access-logs-${data.aws_caller_identity.current.account_id}"
-  kms_key_arn                = var.kms_key_arn
+  kms_key_arn                = local.kms_key_arn
   lifecycle_rule             = [local.bucket_lifecycle_rules["one-year-tiered"]]
   logging_source_bucket_arns = [module.bucket_for_audit_logs[0].arn]
   versioning                 = true
@@ -116,7 +123,7 @@ module "bucket_for_lambda_package" {
 
   region         = var.region
   name           = "${var.bucket_base_name}-lambda-${data.aws_caller_identity.current.account_id}"
-  kms_key_arn    = var.kms_key_arn
+  kms_key_arn    = local.kms_key_arn
   lifecycle_rule = [local.bucket_lifecycle_rules["basic"]]
   versioning     = true
   tags           = var.tags
@@ -136,7 +143,7 @@ module "lambda" {
   created_bucket_names         = var.created_bucket_names != null ? var.created_bucket_names : local.created_bucket_names
   dead_letter_queue            = try(each.value.dead_letter_queue, null)
   environment                  = try(each.value.environment, null)
-  kms_key_arn                  = var.kms_key_arn
+  kms_key_arn                  = local.kms_key_arn
   lambda_log_level             = each.value.lambda_log_level
   lambda_log_retention         = var.lambda_log_retention
   lambda_memory_size           = try(each.value.lambda_memory_size, null)

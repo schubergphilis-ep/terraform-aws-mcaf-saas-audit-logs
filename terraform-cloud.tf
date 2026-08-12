@@ -30,7 +30,7 @@ resource "aws_sqs_queue" "terraform_cloud_audit_log" {
 
   name                       = "terraform-audit-log"
   delay_seconds              = 90
-  kms_master_key_id          = var.kms_key_arn
+  kms_master_key_id          = local.kms_key_arn
   max_message_size           = 2048
   message_retention_seconds  = 345600
   receive_wait_time_seconds  = 10
@@ -46,7 +46,7 @@ resource "aws_sqs_queue" "terraform_cloud_audit_log_dlq" {
   count = local.create_terraform_cloud_resources ? 1 : 0
 
   name                       = "terraform-audit-log-dlq"
-  kms_master_key_id          = var.kms_key_arn
+  kms_master_key_id          = local.kms_key_arn
   message_retention_seconds  = 691200
   visibility_timeout_seconds = 600
 }
@@ -68,7 +68,7 @@ module "dlq_replay_lambda" {
   create_s3_dummy_object      = false
   description                 = "Lambda to replay messages from DLQ to main SQS queue for Terraform Cloud audit logs"
   handler                     = "dlq_replay.handler"
-  kms_key_arn                 = var.kms_key_arn
+  kms_key_arn                 = local.kms_key_arn
   log_retention               = var.lambda_log_retention
   memory_size                 = 128
   runtime                     = "python${var.python_version}"

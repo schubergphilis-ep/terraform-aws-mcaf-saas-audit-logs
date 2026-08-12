@@ -2,17 +2,12 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-module "kms" {
-  source  = "schubergphilis-ep/mcaf-kms/aws"
-  version = "0.3.0"
-
-  name = "example"
-}
-
 module "saas_audit_logs" {
   source = "../.."
 
-  kms_key_arn = module.kms.arn
+  kms_key_configuration = {
+    iam_arns_administrator = ["arn:aws:iam::123456789012:role/key-admin"]
+  }
 
   sources = {
     gitlab = {

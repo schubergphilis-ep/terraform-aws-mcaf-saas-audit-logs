@@ -114,6 +114,7 @@ module "kms_key" {
   region      = var.region
   name        = var.kms_key_configuration.name
   description = "KMS key used for encrypting all saas audit logs resources"
+  tags        = var.tags
 
   default_policy = {
     iam_arns_administrator  = var.kms_key_configuration.iam_arns_administrator

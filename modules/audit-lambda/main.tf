@@ -1,11 +1,24 @@
 locals {
   bucket_lifecycle_rules = {
+    access-logs = {
+      id                                = "access-logs"
+      enabled                           = true
+      abort_incomplete_multipart_upload = { days_after_initiation = 3 }
+      expiration                        = { days = var.s3_access_logging.expiration_days }
+      noncurrent_version_expiration     = { noncurrent_days = 7 }
+      transition                        = [{ days = var.s3_access_logging.transition_days, storage_class = var.s3_access_logging.transition_storage_class }]
+    }
     basic = {
       id                                = "basic"
       enabled                           = true
       abort_incomplete_multipart_upload = { days_after_initiation = 3 }
       expiration                        = { days = 730 }
       noncurrent_version_expiration     = { noncurrent_days = 7 }
+    }
+    expired-delete-markers = {
+      id         = "expired-delete-markers"
+      enabled    = true
+      expiration = { expired_object_delete_marker = true }
     }
     one-year-tiered = {
       id                                = "one-year-tiered"
@@ -171,25 +184,32 @@ module "bucket_for_audit_logs" {
   versioning        = true
   tags              = var.tags
 
-  logging = {
+  logging = var.s3_access_logging.enabled ? {
     target_bucket = module.bucket_for_access_logs[0].name
     target_prefix = "access-logs/"
-  }
+    target_object_key_format = {
+      format_type           = "partitioned"
+      partition_date_source = "EventTime"
+    }
+  } : null
 }
 
 module "bucket_for_access_logs" {
-  count = var.create_bucket ? 1 : 0
+  count = var.create_bucket && var.s3_access_logging.enabled ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 4.0.0"
 
   region                     = var.region
   name_prefix                = "${var.bucket_base_name}-access-logs"
-  kms_key_arn                = var.kms_key_arn
-  lifecycle_rule             = [local.bucket_lifecycle_rules["one-year-tiered"]]
   logging_source_bucket_arns = [module.bucket_for_audit_logs[0].arn]
   versioning                 = true
   tags                       = var.tags
+
+  lifecycle_rule = [
+    local.bucket_lifecycle_rules["access-logs"],
+    local.bucket_lifecycle_rules["expired-delete-markers"],
+  ]
 }
 
 module "bucket_for_lambda_package" {
@@ -205,25 +225,32 @@ module "bucket_for_lambda_package" {
   versioning     = true
   tags           = var.tags
 
-  logging = {
+  logging = var.s3_access_logging.enabled ? {
     target_bucket = module.bucket_for_lambda_package_access_logs[0].name
     target_prefix = "access-logs/"
-  }
+    target_object_key_format = {
+      format_type           = "partitioned"
+      partition_date_source = "EventTime"
+    }
+  } : null
 }
 
 module "bucket_for_lambda_package_access_logs" {
-  count = var.create_bucket ? 1 : 0
+  count = var.create_bucket && var.s3_access_logging.enabled ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 4.0.0"
 
   region                     = var.region
   name_prefix                = "${var.bucket_base_name}-lambda-access-logs"
-  kms_key_arn                = var.kms_key_arn
-  lifecycle_rule             = [local.bucket_lifecycle_rules["one-year-tiered"]]
   logging_source_bucket_arns = [module.bucket_for_lambda_package[0].arn]
   versioning                 = true
   tags                       = var.tags
+
+  lifecycle_rule = [
+    local.bucket_lifecycle_rules["access-logs"],
+    local.bucket_lifecycle_rules["expired-delete-markers"],
+  ]
 }
 
 resource "aws_secretsmanager_secret" "token" {

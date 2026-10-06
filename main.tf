@@ -9,12 +9,25 @@
 //
 locals {
   bucket_lifecycle_rules = {
+    access-logs = {
+      id                                = "access-logs"
+      enabled                           = true
+      abort_incomplete_multipart_upload = { days_after_initiation = 3 }
+      expiration                        = { days = var.s3_access_logging.expiration_days }
+      noncurrent_version_expiration     = { noncurrent_days = 7 }
+      transition                        = [{ days = var.s3_access_logging.transition_days, storage_class = var.s3_access_logging.transition_storage_class }]
+    }
     basic = {
       id                                = "basic"
       enabled                           = true
       abort_incomplete_multipart_upload = { days_after_initiation = 3 }
       expiration                        = { days = 730 }
       noncurrent_version_expiration     = { noncurrent_days = 7 }
+    }
+    expired-delete-markers = {
+      id         = "expired-delete-markers"
+      enabled    = true
+      expiration = { expired_object_delete_marker = true }
     }
     one-year-tiered = {
       id                                = "one-year-tiered"
@@ -94,25 +107,32 @@ module "bucket_for_audit_logs" {
   versioning        = true
   tags              = var.tags
 
-  logging = {
+  logging = var.s3_access_logging.enabled ? {
     target_bucket = module.bucket_for_access_logs[0].name
     target_prefix = "access-logs/"
-  }
+    target_object_key_format = {
+      format_type           = "partitioned"
+      partition_date_source = "EventTime"
+    }
+  } : null
 }
 
 module "bucket_for_access_logs" {
-  count = local.create_bucket ? 1 : 0
+  count = local.create_bucket && var.s3_access_logging.enabled ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 4.0.0"
 
   region                     = var.region
   name                       = "${var.bucket_base_name}-access-logs-${data.aws_caller_identity.current.account_id}"
-  kms_key_arn                = local.kms_key_arn
-  lifecycle_rule             = [local.bucket_lifecycle_rules["one-year-tiered"]]
   logging_source_bucket_arns = [module.bucket_for_audit_logs[0].arn]
   versioning                 = true
   tags                       = var.tags
+
+  lifecycle_rule = [
+    local.bucket_lifecycle_rules["access-logs"],
+    local.bucket_lifecycle_rules["expired-delete-markers"],
+  ]
 }
 
 module "bucket_for_lambda_package" {
@@ -128,25 +148,32 @@ module "bucket_for_lambda_package" {
   versioning     = true
   tags           = var.tags
 
-  logging = {
+  logging = var.s3_access_logging.enabled ? {
     target_bucket = module.bucket_for_lambda_package_access_logs[0].name
     target_prefix = "access-logs/"
-  }
+    target_object_key_format = {
+      format_type           = "partitioned"
+      partition_date_source = "EventTime"
+    }
+  } : null
 }
 
 module "bucket_for_lambda_package_access_logs" {
-  count = local.create_bucket ? 1 : 0
+  count = local.create_bucket && var.s3_access_logging.enabled ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
   version = "~> 4.0.0"
 
   region                     = var.region
   name                       = "${var.bucket_base_name}-lambda-access-logs-${data.aws_caller_identity.current.account_id}"
-  kms_key_arn                = local.kms_key_arn
-  lifecycle_rule             = [local.bucket_lifecycle_rules["one-year-tiered"]]
   logging_source_bucket_arns = [module.bucket_for_lambda_package[0].arn]
   versioning                 = true
   tags                       = var.tags
+
+  lifecycle_rule = [
+    local.bucket_lifecycle_rules["access-logs"],
+    local.bucket_lifecycle_rules["expired-delete-markers"],
+  ]
 }
 
 module "lambda" {
@@ -172,6 +199,7 @@ module "lambda" {
   lambda_policy                = try(each.value.lambda_policy, null)
   object_locking               = var.object_locking
   python_version               = var.python_version
+  s3_access_logging            = var.s3_access_logging
   schedule_expression_timezone = var.schedule_expression_timezone
   scheduled_time               = var.scheduled_time
   secret_name                  = try(each.value.secret_name, "/audit-log-tokens/${each.key}")

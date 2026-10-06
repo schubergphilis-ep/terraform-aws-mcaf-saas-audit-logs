@@ -44,7 +44,7 @@ With this configuration the module will
   - A bucket for audit logs
   - A bucket for the audit logs access logs
   - A bucket for the lambda packages
-  - A bucket for the lambda packages access logs
+  - A bucket for the lambda packages access logs (the access logs buckets can be disabled, see [Access logging](#access-logging))
 - Deploy a lambda per source to fetch the logs and store in the audit log bucket, using the provider name as a bucket prefix
 - Schedule the lambdas to run at 9am UTC every day
 
@@ -71,6 +71,25 @@ Each source can be tuned by setting the following optional fields:
 | `lambda_log_level`    | Set the log level for the lambda function (defaults to `INFO`)                                    |
 | `secret_name`         | Set a custom secret name for the lambda function (defaults to `/audit-log-tokens/${source_name)`) |
 | `tags`                | Any additional tags to apply to the created resources                                             |
+
+### Access logging
+
+When the module creates the buckets, S3 server access logging is enabled on the audit logs bucket and the lambda packages bucket. Each of them logs to its own access logs bucket:
+
+- Logs are written under the `access-logs/` prefix, partitioned by the time of the request (`access-logs/<account-id>/<region>/<bucket>/YYYY/MM/DD/...`).
+- The access logs buckets are encrypted with S3 managed keys (SSE-S3) instead of `var.kms_key_arn`, as [S3 server access logging](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-server-access-logging.html) does not support SSE-KMS on destination buckets.
+- Access logs are moved to `GLACIER_IR` after 90 days and expire after 720 days. Noncurrent versions are deleted after 7 days.
+
+The retention can be changed, or access logging disabled, with `var.s3_access_logging` (defaults shown):
+
+```hcl
+s3_access_logging = {
+  enabled                  = true
+  expiration_days          = 720
+  transition_days          = 90
+  transition_storage_class = "GLACIER_IR"
+}
+```
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -127,6 +146,7 @@ Each source can be tuned by setting the following optional fields:
 | <a name="input_object_locking"></a> [object\_locking](#input\_object\_locking) | Object locking configuration for S3 log and access-log buckets | <pre>object({<br/>    mode  = optional(string, "GOVERNANCE")<br/>    years = optional(number, 1)<br/>  })</pre> | <pre>{<br/>  "mode": "GOVERNANCE",<br/>  "years": 1<br/>}</pre> | no |
 | <a name="input_python_version"></a> [python\_version](#input\_python\_version) | The version of Python to use for the Lambda function | `string` | `"3.13"` | no |
 | <a name="input_region"></a> [region](#input\_region) | The AWS region where resources will be created; if omitted the default provider region is used | `string` | `null` | no |
+| <a name="input_s3_access_logging"></a> [s3\_access\_logging](#input\_s3\_access\_logging) | S3 server access logging configuration for the created buckets. 'expiration\_days' and 'transition\_days' set the retention of the access logs. | <pre>object({<br/>    enabled                  = optional(bool, true)<br/>    expiration_days          = optional(number, 720)<br/>    transition_days          = optional(number, 90)<br/>    transition_storage_class = optional(string, "GLACIER_IR")<br/>  })</pre> | `{}` | no |
 | <a name="input_schedule_expression_timezone"></a> [schedule\_expression\_timezone](#input\_schedule\_expression\_timezone) | The timezone in which the scheduling expression is evaluated | `string` | `"UTC"` | no |
 | <a name="input_scheduled_time"></a> [scheduled\_time](#input\_scheduled\_time) | Time of day to trigger the audit Lambda functions (runs once a day) | `string` | `"09:00"` | no |
 | <a name="input_security_group_egress_rules"></a> [security\_group\_egress\_rules](#input\_security\_group\_egress\_rules) | n/a | <pre>list(object({<br/>    cidr_ipv4                    = optional(string)<br/>    cidr_ipv6                    = optional(string)<br/>    description                  = string<br/>    from_port                    = optional(number, 0)<br/>    ip_protocol                  = optional(string, "-1")<br/>    prefix_list_id               = optional(string)<br/>    referenced_security_group_id = optional(string)<br/>    to_port                      = optional(number, 0)<br/>  }))</pre> | <pre>[<br/>  {<br/>    "cidr_ipv4": "0.0.0.0/0",<br/>    "description": "Default Security Group rule for SaaS Audit Lambda",<br/>    "ip_protocol": "tcp",<br/>    "to_port": 443<br/>  }<br/>]</pre> | no |

@@ -16,10 +16,11 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_bucket_for_access_logs"></a> [bucket\_for\_access\_logs](#module\_bucket\_for\_access\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
-| <a name="module_bucket_for_audit_logs"></a> [bucket\_for\_audit\_logs](#module\_bucket\_for\_audit\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
-| <a name="module_bucket_for_lambda_package"></a> [bucket\_for\_lambda\_package](#module\_bucket\_for\_lambda\_package) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
-| <a name="module_lambda"></a> [lambda](#module\_lambda) | schubergphilis-ep/mcaf-lambda/aws | ~> 4.1.0 |
+| <a name="module_bucket_for_access_logs"></a> [bucket\_for\_access\_logs](#module\_bucket\_for\_access\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 4.0.0 |
+| <a name="module_bucket_for_audit_logs"></a> [bucket\_for\_audit\_logs](#module\_bucket\_for\_audit\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 4.0.0 |
+| <a name="module_bucket_for_lambda_package"></a> [bucket\_for\_lambda\_package](#module\_bucket\_for\_lambda\_package) | schubergphilis-ep/mcaf-s3/aws | ~> 4.0.0 |
+| <a name="module_bucket_for_lambda_package_access_logs"></a> [bucket\_for\_lambda\_package\_access\_logs](#module\_bucket\_for\_lambda\_package\_access\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 4.0.0 |
+| <a name="module_lambda"></a> [lambda](#module\_lambda) | schubergphilis-ep/mcaf-lambda/aws | ~> 4.2.0 |
 | <a name="module_scheduler_iam_role"></a> [scheduler\_iam\_role](#module\_scheduler\_iam\_role) | schubergphilis-ep/mcaf-role/aws | ~> 0.5.3 |
 
 ## Resources

@@ -160,7 +160,7 @@ module "bucket_for_audit_logs" {
   count = var.create_bucket ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
-  version = "~> 3.0.0"
+  version = "~> 4.0.0"
 
   region            = var.region
   name_prefix       = var.bucket_base_name
@@ -181,7 +181,7 @@ module "bucket_for_access_logs" {
   count = var.create_bucket ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
-  version = "~> 3.0.0"
+  version = "~> 4.0.0"
 
   region                     = var.region
   name_prefix                = "${var.bucket_base_name}-access-logs"
@@ -196,7 +196,7 @@ module "bucket_for_lambda_package" {
   count = var.create_bucket ? 1 : 0
 
   source  = "schubergphilis-ep/mcaf-s3/aws"
-  version = "~> 3.0.0"
+  version = "~> 4.0.0"
 
   region         = var.region
   name_prefix    = "${var.bucket_base_name}-lambda"
@@ -204,6 +204,26 @@ module "bucket_for_lambda_package" {
   lifecycle_rule = [local.bucket_lifecycle_rules["basic"]]
   versioning     = true
   tags           = var.tags
+
+  logging = {
+    target_bucket = module.bucket_for_lambda_package_access_logs[0].name
+    target_prefix = "access-logs/"
+  }
+}
+
+module "bucket_for_lambda_package_access_logs" {
+  count = var.create_bucket ? 1 : 0
+
+  source  = "schubergphilis-ep/mcaf-s3/aws"
+  version = "~> 4.0.0"
+
+  region                     = var.region
+  name_prefix                = "${var.bucket_base_name}-lambda-access-logs"
+  kms_key_arn                = var.kms_key_arn
+  lifecycle_rule             = [local.bucket_lifecycle_rules["one-year-tiered"]]
+  logging_source_bucket_arns = [module.bucket_for_lambda_package[0].arn]
+  versioning                 = true
+  tags                       = var.tags
 }
 
 resource "aws_secretsmanager_secret" "token" {
@@ -232,7 +252,7 @@ resource "aws_s3_object" "lambda_package" {
 
 module "lambda" {
   source  = "schubergphilis-ep/mcaf-lambda/aws"
-  version = "~> 4.1.0"
+  version = "~> 4.2.0"
 
   region                      = var.region
   name                        = var.lambda_name

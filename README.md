@@ -40,10 +40,11 @@ module "saas_audit_logs" {
 
 With this configuration the module will
 
-- Create 3 buckets:
+- Create 4 buckets:
   - A bucket for audit logs
   - A bucket for the audit logs access logs
   - A bucket for the lambda packages
+  - A bucket for the lambda packages access logs
 - Deploy a lambda per source to fetch the logs and store in the audit log bucket, using the provider name as a bucket prefix
 - Schedule the lambdas to run at 9am UTC every day
 
@@ -89,9 +90,10 @@ Each source can be tuned by setting the following optional fields:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_bucket_for_access_logs"></a> [bucket\_for\_access\_logs](#module\_bucket\_for\_access\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
-| <a name="module_bucket_for_audit_logs"></a> [bucket\_for\_audit\_logs](#module\_bucket\_for\_audit\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
-| <a name="module_bucket_for_lambda_package"></a> [bucket\_for\_lambda\_package](#module\_bucket\_for\_lambda\_package) | schubergphilis-ep/mcaf-s3/aws | ~> 3.0.0 |
+| <a name="module_bucket_for_access_logs"></a> [bucket\_for\_access\_logs](#module\_bucket\_for\_access\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 4.0.0 |
+| <a name="module_bucket_for_audit_logs"></a> [bucket\_for\_audit\_logs](#module\_bucket\_for\_audit\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 4.0.0 |
+| <a name="module_bucket_for_lambda_package"></a> [bucket\_for\_lambda\_package](#module\_bucket\_for\_lambda\_package) | schubergphilis-ep/mcaf-s3/aws | ~> 4.0.0 |
+| <a name="module_bucket_for_lambda_package_access_logs"></a> [bucket\_for\_lambda\_package\_access\_logs](#module\_bucket\_for\_lambda\_package\_access\_logs) | schubergphilis-ep/mcaf-s3/aws | ~> 4.0.0 |
 | <a name="module_dlq_replay_lambda"></a> [dlq\_replay\_lambda](#module\_dlq\_replay\_lambda) | schubergphilis-ep/mcaf-lambda/aws | ~> 4.1.0 |
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | schubergphilis-ep/mcaf-kms/aws | ~> 3.0.0 |
 | <a name="module_lambda"></a> [lambda](#module\_lambda) | ./modules/audit-lambda | n/a |

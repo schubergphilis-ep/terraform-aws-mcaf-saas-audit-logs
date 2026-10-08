@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.0](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v1.2.1...v1.3.0) (2026-10-08)
+
+
+### 🚀 Features
+
+* lambda bucket access logs ([#14](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/issues/14)) ([608a12a](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/608a12a083d661829f3912f83c7f4fa4d8bfa92c))
+
 ## [1.2.1](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v1.2.0...v1.2.1) (2026-08-13)
 
 

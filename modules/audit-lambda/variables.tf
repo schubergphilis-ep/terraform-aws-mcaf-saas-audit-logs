@@ -132,6 +132,18 @@ variable "region" {
   description = "The AWS region where resources will be created; if omitted the default provider region is used"
 }
 
+variable "s3_access_logging" {
+  type = object({
+    enabled                  = optional(bool, true)
+    expiration_days          = optional(number, 720)
+    transition_days          = optional(number, 90)
+    transition_storage_class = optional(string, "GLACIER_IR")
+  })
+  default     = {}
+  nullable    = false
+  description = "S3 server access logging configuration for the created buckets"
+}
+
 variable "schedule_expression_timezone" {
   type        = string
   default     = "UTC"

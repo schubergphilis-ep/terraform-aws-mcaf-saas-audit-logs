@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.1](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v1.3.0...v1.3.1) (2026-10-26)
+
+
+### 🐛 Fixes
+
+* pin certifi to 2026.10.23 in lambda requirements ([#16](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/issues/16)) ([c9903ba](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/c9903ba6533d77da0bfaef06d43a72389a5a1bda))
+
 ## [1.3.0](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v1.2.1...v1.3.0) (2026-10-08)
 
 

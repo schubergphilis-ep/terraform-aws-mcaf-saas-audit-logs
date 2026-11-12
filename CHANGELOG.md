@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.2](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v1.3.1...v1.3.2) (2026-11-12)
+
+
+### 🐛 Fixes
+
+* truncate bucket base name to fit the access logs bucket names ([#18](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/issues/18)) ([7af64ed](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/commit/7af64ed4b6bcc7cfc71507a5bdc6898fdeb03501))
+
 ## [1.3.1](https://github.com/schubergphilis-ep/terraform-aws-mcaf-saas-audit-logs/compare/v1.3.0...v1.3.1) (2026-10-26)
 
 

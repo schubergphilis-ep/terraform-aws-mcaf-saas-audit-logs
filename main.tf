@@ -8,6 +8,14 @@
 // put these resources in a separate file named after the source, e.g. `terraform-cloud.tf`.
 //
 locals {
+  # S3 bucket names are limited to 63 characters: truncate var.bucket_base_name to fit the suffix of each access logs
+  # bucket, and trim any "-" or "." the truncation leaves at the end. A base name that fits is used as is, so the names
+  # of existing access logs buckets don't change.
+  access_logs_bucket_names = {
+    audit_logs     = "${length(var.bucket_base_name) > 38 ? trim(substr(var.bucket_base_name, 0, 38), "-.") : var.bucket_base_name}-access-logs-${data.aws_caller_identity.current.account_id}"
+    lambda_package = "${length(var.bucket_base_name) > 31 ? trim(substr(var.bucket_base_name, 0, 31), "-.") : var.bucket_base_name}-lambda-access-logs-${data.aws_caller_identity.current.account_id}"
+  }
+
   bucket_lifecycle_rules = {
     access-logs = {
       id                                = "access-logs"
@@ -124,7 +132,7 @@ module "bucket_for_access_logs" {
   version = "~> 4.0.0"
 
   region                     = var.region
-  name                       = "${var.bucket_base_name}-access-logs-${data.aws_caller_identity.current.account_id}"
+  name                       = local.access_logs_bucket_names["audit_logs"]
   logging_source_bucket_arns = [module.bucket_for_audit_logs[0].arn]
   versioning                 = true
   tags                       = var.tags
@@ -165,7 +173,7 @@ module "bucket_for_lambda_package_access_logs" {
   version = "~> 4.0.0"
 
   region                     = var.region
-  name                       = "${var.bucket_base_name}-lambda-access-logs-${data.aws_caller_identity.current.account_id}"
+  name                       = local.access_logs_bucket_names["lambda_package"]
   logging_source_bucket_arns = [module.bucket_for_lambda_package[0].arn]
   versioning                 = true
   tags                       = var.tags

@@ -1,4 +1,12 @@
 locals {
+  # S3 bucket name prefixes are limited to 37 characters: truncate var.bucket_base_name to fit the suffix of each access
+  # logs bucket prefix, and trim any "-" or "." the truncation leaves at the end. A base name that fits is used as is, so
+  # the names of existing access logs buckets don't change.
+  access_logs_bucket_prefixes = {
+    audit_logs     = "${length(var.bucket_base_name) > 25 ? trim(substr(var.bucket_base_name, 0, 25), "-.") : var.bucket_base_name}-access-logs"
+    lambda_package = "${length(var.bucket_base_name) > 18 ? trim(substr(var.bucket_base_name, 0, 18), "-.") : var.bucket_base_name}-lambda-access-logs"
+  }
+
   bucket_lifecycle_rules = {
     access-logs = {
       id                                = "access-logs"
@@ -201,7 +209,7 @@ module "bucket_for_access_logs" {
   version = "~> 4.0.0"
 
   region                     = var.region
-  name_prefix                = "${var.bucket_base_name}-access-logs"
+  name_prefix                = local.access_logs_bucket_prefixes["audit_logs"]
   logging_source_bucket_arns = [module.bucket_for_audit_logs[0].arn]
   versioning                 = true
   tags                       = var.tags
@@ -242,7 +250,7 @@ module "bucket_for_lambda_package_access_logs" {
   version = "~> 4.0.0"
 
   region                     = var.region
-  name_prefix                = "${var.bucket_base_name}-lambda-access-logs"
+  name_prefix                = local.access_logs_bucket_prefixes["lambda_package"]
   logging_source_bucket_arns = [module.bucket_for_lambda_package[0].arn]
   versioning                 = true
   tags                       = var.tags

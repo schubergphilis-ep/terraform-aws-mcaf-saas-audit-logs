@@ -76,6 +76,8 @@ Each source can be tuned by setting the following optional fields:
 
 When the module creates the buckets, S3 server access logging is enabled on the audit logs bucket and the lambda packages bucket. Each of them logs to its own access logs bucket:
 
+- The access logs buckets are named `<bucket_base_name>-access-logs-<account-id>` and `<bucket_base_name>-lambda-access-logs-<account-id>`. As S3 bucket names are limited to 63 characters, a `var.bucket_base_name` longer than 38 characters (audit logs) or 31 characters (lambda packages) is truncated to that length (dropping any trailing `-` or `.`) in the access logs bucket name. Two deployments in the same account whose `var.bucket_base_name` share the same truncated base name will clash on the access logs bucket name.
+- With `var.create_bucket_per_source`, the access logs buckets get the `<bucket_base_name>-access-logs` and `<bucket_base_name>-lambda-access-logs` prefixes instead. As S3 bucket name prefixes are limited to 37 characters, the base name is truncated to 25 characters (audit logs) or 18 characters (lambda packages) in these prefixes, e.g. `terraform-cloud-audit-log-access-logs` and `terraform-cloud-au-lambda-access-logs`.
 - Logs are written under the `access-logs/` prefix, partitioned by the time of the request (`access-logs/<account-id>/<region>/<bucket>/YYYY/MM/DD/...`).
 - The access logs buckets are encrypted with S3 managed keys (SSE-S3) instead of `var.kms_key_arn`, as [S3 server access logging](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-server-access-logging.html) does not support SSE-KMS on destination buckets.
 - Access logs are moved to `GLACIER_IR` after 90 days and expire after 720 days. Noncurrent versions are deleted after 7 days.
